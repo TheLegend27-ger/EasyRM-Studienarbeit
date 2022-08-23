@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!--Stylesheets-->
+    <link rel="stylesheet" href="style.css"> 
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <title>EasyRM Work in Progress</title>
+
+    <script type="text/javascript" src="./go.js"></script>
+    <!-- Eigene Skripte/Funktionen laden -->
+    <script type="text/javascript" src="Functions/loadStandardDiagram.js"></script>
+    <script type="text/javascript" src="Functions/checkLinkMultiplicity.js"></script>
+    <script type="text/javascript" src="Functions/validateDiagram.js"></script>
+    <script type="text/javascript" src="Functions/throwGenericAlert.js"></script>
+    <script type="text/javascript" src="Functions/loadJsonFromFile.js"></script>
+    <script type="text/javascript" src="Functions/save.js"></script>
+    <script type="text/javascript" src="Functions/createAndDownloadFile.js"></script>
+    <script type="text/javascript" src="Functions/checkNodeCategoryType.js"></script>
+    <script type="text/javascript" src="Functions/createJsonArrayFromModels.js"></script>
+    <script type="text/javascript" src="Functions/createSqlStatementFromJson.js"></script>
+
+    <script type="text/javascript" src="Functions/changePopUpVisibility.js"></script>
+    <script type="text/javascript" src="./init.js"></script>
+    
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</head>
+<body onload="myPopup()">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <img src="./Images/logo.svg" width="135" height="35" class="d-inline-block align-top" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" onclick="document.getElementById('input').click();" href="#">Load from EasyRM File<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="save()">Save as EasyRm File</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Export
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">to PDF (to be implemented)</a>
+                        <a class="dropdown-item" href="#">to PNG (to be implemented)</a>
+                        <a class="dropdown-item" href="#">to SVG (to be implemented)</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="myPopup4Help()" href="#" data-toggle="helpPopup" aria-haspopup="true" aria-expanded="false">Help</a>
+                    
+                </li>
+            </ul>
+            <button style="margin-right: 0; margin-left: auto" type="button" onclick="createSqlStatementFromJson()" class="btn btn-primary"><i class="bi bi-magic"></i> Convert to SQL</button>
+        </div>
+    </nav>
+
+    <div aria-labelledby="sqlPopup" id="sqlPopup" class="isNotVisible">
+        <button id="close" onclick="myPopup4SQL()">&times;</button>
+        <h2>Your SQL Code</h2>
+        <p id="SQLText">
+            I need also help! <br><br>
+        </p>
+    </div>
+
+    <div aria-labelledby="helpPopup" id="helpPopup" style="overflow:scroll" class="isNotVisible h50">
+        <button id="close" onclick="myPopup4Help()">&times;</button>
+        <h2>You need help?</h2>
+        <p><br>
+            To create an ERM just place your Entities, Relations and Attributes via Drag'n'Drop into the Diagram.
+        <h3>What are Entities, Relations and Attributes?</h3>
+            <ol>
+                <li>
+                    <b>Entity</b> <br>
+                    An Entity is an object of the real world, which can be distinguished from other objects.
+                    Two entities can be in a relationship and be connected by one relation therefore.
+                    It is presented as a square. <br>
+                    Examples:
+                    <ul>
+                        <li>the <u>teacher</u> Max Maxwill</li>
+                        <li>the <u>student</u> Henry</li>
+                        <li>the <u>book</u> Hamlet</li>
+                    </ul>
+                </li>
+                <li>
+                    <b>Relation</b> <br>
+                    A Relation can exist between two Entities.
+                    There can be different combinations between the connected entities through the relationships.
+                    It is represented as a diamond. <br>
+                    Examples:
+                    <ul>
+                        <li>One teacher can <u>teach</u> many courses, but every course can only be teached one teacher (1-n-relation)</li>
+                        <li>One employee can only <u>have</u> one identification number and one id can only belong to one person (1-1-relation)</li>
+                        <li>One student can <u>visit</u> multiple courses, but one course can be visited by multiple students (m-n-relation) </li>
+                    </ul>
+                </li>
+                <li>
+                    <b>Attribute</b> <br>
+                    Attributes are special characteristics of an Entity.
+                    An attribute is represented as an oval. <br>
+                    Example: A car can have diffrent characteristics
+                    <ol>
+                        <li>It has a <u>motor</u>.</li>
+                        <li>It has a <u>color</u>.</li>
+                        <li>And cars also have a <u>modell number</u>.</li>
+                    </ol>
+                </li>
+            </ol>
+            <h4>Are there more restrictions?</h4>
+            If you want to know more about our tool and ER Modell you find more information here:
+            <a href="#">User documentation</a> <br>
+            </p>
+    </div>
+
+    <div id="popup" class="isNotVisible">
+        <button id="close" onclick="myPopup()">&times;</button>
+        <h2>Welcome to EasyRM!</h2>
+        <p>
+            EasyRM is a free Software for creating ERM's. <br>
+            Creating a SQL Database can be so easy! <br>
+            Just place the Entities, Relations and Attributes via Drag'n'Drop into the Diagram. <br>
+            When you Press "Convert to SQL" the Program will check for duplicates, so watch out for those! <br>
+            Have fun! <br><br>
+        </p>
+    </div>
+
+
+    <div id="diagramBody" class="diagramIsVisible"  style="width: 100%; justify-content: space-between">
+        <div id="myPaletteDiv" style="width: 180px; margin-right: 2px; background-color: #ffffff;"></div>
+        <div class="container-fluid" id="myDiagramDiv" style="flex-grow: 1; height: 750px; background-color: #ffffff;"></div>
+
+    </div>
+    <textarea id="mySavedModel" style="display: none">
+        { "class": "GraphLinksModel",
+          "linkFromPortIdProperty": "fromPort",
+          "linkToPortIdProperty": "toPort",
+          "nodeDataArray": [
+        {"category":"Entity","text":"Entity","key":-1,"loc":"-518.4042205810547 -271.4447898864746"},
+        {"category":"Attribute","text":"Attribute","key":-2,"loc":"-27.532485961914062 -307.80842208862305"}
+        ],
+          "linkDataArray": []}
+    </textarea>
+    <input style="display: none" type="file" id="input" onchange="loadJsonFromFile(this.files)">
+</body>
+
+</html>
